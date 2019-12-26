@@ -1,0 +1,1 @@
+C:\Users\tlhavlik\AppData\Local\Programs\Python\Python37\python.exe acrobot.py --mode test --checkpoint checkpoint2
