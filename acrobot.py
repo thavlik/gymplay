@@ -69,13 +69,13 @@ class AAC(MyModel):
         self.rewards = []
         self.discount = args.episode_discount
         self.discounts = []
-        optimizer = torch.optim.AdamW(self.parameters(), lr=0.01)
-        optimizer = SWA(optimizer, swa_start=64, swa_freq=128, swa_lr=0.05)
-        optimizer.defaults = {}
         if os.path.isfile(args.checkpoint):
             model_dict = torch.load(args.checkpoint)
             self.load_state_dict(model_dict)
             print(f'Loaded {args.checkpoint}')
+        optimizer = torch.optim.AdamW(self.parameters(), lr=0.01)
+        optimizer = SWA(optimizer, swa_start=64, swa_freq=128, swa_lr=0.05)
+        optimizer.defaults = {}
         if os.path.isfile(args.checkpoint + '_optimizer'):
             optimizer_dict = torch.load(args.checkpoint + '_optimizer')
             optimizer.load_state_dict(optimizer_dict)
@@ -102,13 +102,12 @@ class AAC(MyModel):
         _, action = action_prob.max(1, keepdim=True)
         if not self.training:
             return action
-        # save output for backpro
+        # save output for backprop
         action_prob = F.log_softmax(action_prob, dim=1)
         self.outputs.append(ModelOutput(action_prob.gather(-1, action), value))
         return action
 
     def backward(self):
-        #
         # calculate step returns in reverse order
         rewards = self.rewards
 
@@ -119,7 +118,6 @@ class AAC(MyModel):
             returns[i] = step_return
 
         returns = returns.to(device)
-        #
         # calculate losses
         policy_loss = 0
         value_loss = 0
