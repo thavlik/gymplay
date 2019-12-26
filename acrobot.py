@@ -24,7 +24,7 @@ class MyModel(nn.Module):
     def __init__(self,
                  input_features,
                  output_features,
-                 layers=[32, 16],
+                 layers=[64, 32, 16],
                  dropout=0.1):
         super(MyModel, self).__init__()
         l = []
